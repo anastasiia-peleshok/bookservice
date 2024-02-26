@@ -23,12 +23,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException("User with email "+useremail+" is not found");
         }
         User user=userRepository.findUserByEmail(useremail).get();
-//        org.springframework.security.core.userdetails.User newUser=new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), user.getRoles().stream()
-//                .map(role -> new SimpleGrantedAuthority(role.getRoleName()))
-//                .collect(Collectors.toList()));
-//        System.out.println(newUser);
-//        return newUser;
 
-       return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), user.getRoles());
-    }
+        org.springframework.security.core.userdetails.User newUser= new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), user.getRoles());
+
+
+        return newUser;}
 }

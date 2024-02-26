@@ -28,8 +28,8 @@ public class Role implements GrantedAuthority{
         return roleName.toString();
     }
 
-    public String getRoleName() {
-        return roleName.toString();
+    public RoleName getRoleName() {
+        return roleName;
     }
 
     public enum RoleName {

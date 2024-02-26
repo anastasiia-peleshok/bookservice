@@ -17,7 +17,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     @Transactional
     public Role save(Role role) {
-        if(roleRepository.findByRoleName(Role.RoleName.valueOf(role.getRoleName())).isPresent()){
+        if(roleRepository.findByRoleName((role.getRoleName())).isPresent()){
             throw new IllegalArgumentException("Role with this name  " + role.getRoleName().toString() + " already exists");
 
         }
