@@ -12,71 +12,69 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class BookServiceImpl implements BookService{
+public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
     private final AnnotationRepository annotationRepository;
 
     @Override
     public List<BookDTO> getBooks() {
-        return bookRepository.findAll().stream().map(a-> BookMapper.mapToBookDTO(a)).collect(Collectors.toList());
+        return bookRepository.findAll().stream().map(a -> BookMapper.mapToBookDTO(a)).collect(Collectors.toList());
     }
 
     @Override
     public List<BookDTO> getBooksByGenre(Genre genre) {
-        return bookRepository.findBooksByGenre(genre).stream().map(a-> BookMapper.mapToBookDTO(a)).collect(Collectors.toList());
+        return bookRepository.findBooksByGenre(genre).stream().map(a -> BookMapper.mapToBookDTO(a)).collect(Collectors.toList());
     }
 
     @Override
-    public Optional<BookDTO> getBookById(long theId) {
-
-        return bookRepository.findById(theId).map(a-> BookMapper.mapToBookDTO(a));
-
+    public BookDTO getBookById(long theBookId) {
+        return bookRepository.findById(theBookId).map(a -> BookMapper.mapToBookDTO(a)).orElseThrow(() -> new NoSuchElementException("Book with id: " + theBookId+" is not found"));
     }
 
     @Override
     @Transactional
     public Book saveBook(BookDTO theBookDTO) {
+        if (bookRepository.findByTitle(theBookDTO.getTitle()).isPresent()) {
+            throw new IllegalArgumentException("Book with title " + theBookDTO.getTitle() + " already exists");
+        }
         Book theBook = BookMapper.mapToBook(theBookDTO);
-
         theBook = bookRepository.save(theBook);
-
         Annotation annotation = theBook.getAnnotation();
-
         if (annotation != null) {
             annotation.setBook(theBook);
             annotationRepository.save(annotation);
         }
-
         return theBook;
     }
+
     @Transactional
     @Override
     public Book editBook(long theBookId, BookDTO theBookDTO) {
-        Book theBook = BookMapper.mapToBook(theBookDTO);
         Book existingBook = bookRepository.findById(theBookId)
-                .orElseThrow(() -> new IllegalArgumentException("Book not found with id: " + theBookId));
+                .orElseThrow(() -> new NoSuchElementException("Book with id: " + theBookId+" is not found"));
 
-        // Оновлення властивостей книги з BookDTO
-        existingBook.setName(theBook.getName());
-        existingBook.setAuthor(theBook.getAuthor());
-        existingBook.setGenre(theBook.getGenre());
+        existingBook.setTitle(theBookDTO.getTitle());
+        existingBook.setAuthor(theBookDTO.getAuthor());
+        existingBook.setGenre(theBookDTO.getGenre());
 
-        Annotation annotation=annotationRepository.findById(theBookId).get();
-        annotation.setDescription(theBook.getAnnotation().getDescription());
+        Annotation annotation = annotationRepository.findById(theBookId).get();
+        annotation.setDescription(theBookDTO.getAnnotation());
         existingBook.setAnnotation(annotationRepository.save(annotation));
 
-        // Збереження оновленої книги у базі даних
         return bookRepository.save(existingBook);
     }
+
     @Transactional
     @Override
-    public void deleteBook(long theId) {
-
+    public void deleteBook(long theBookId) {
+        Book bookToDelete = bookRepository.findById(theBookId)
+                .orElseThrow(() -> new NoSuchElementException("Book with id: " + theBookId+" is not found"));
+        bookRepository.delete(bookToDelete);
     }
 }

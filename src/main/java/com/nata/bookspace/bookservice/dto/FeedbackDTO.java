@@ -1,9 +1,5 @@
 package com.nata.bookspace.bookservice.dto;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.nata.bookspace.bookservice.entity.Book;
-import com.nata.bookspace.bookservice.entity.User;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

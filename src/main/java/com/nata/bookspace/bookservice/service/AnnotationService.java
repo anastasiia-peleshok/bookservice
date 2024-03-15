@@ -10,7 +10,5 @@ import java.util.Optional;
 
 public interface AnnotationService {
     List<AnnotationDTO> getAnnotations();
-    Optional<Annotation> getAnnotationById(long theId);
-//    Annotation saveAnnotation(Annotation theAnnotation);
-    void deleteAnnotation(long theId);
+    Annotation getAnnotationById(long theId);
 }

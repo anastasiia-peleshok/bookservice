@@ -1,13 +1,9 @@
 package com.nata.bookspace.bookservice.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
-//import org.springframework.security.core.GrantedAuthority;
 
-import java.util.Set;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -15,29 +11,28 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class Role implements GrantedAuthority{
+public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @Enumerated(value = EnumType.STRING)
+
     @Column(name = "role")
-    private RoleName roleName;
+    private String roleName;
 
-    @Override
-    public String getAuthority() {
-        return roleName.toString();
-    }
 
-    public RoleName getRoleName() {
+    public String getRoleName() {
         return roleName;
     }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Role role = (Role) o;
+        return Objects.equals(id, role.id) && Objects.equals(roleName, role.roleName);
+    }
 
-    public enum RoleName {
-        ADMIN, USER;
-
-        @Override
-        public String toString() {
-            return super.toString();
-        }
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, roleName);
     }
 }

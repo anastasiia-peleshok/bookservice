@@ -13,20 +13,18 @@ import java.util.NoSuchElementException;
 public class RoleServiceImpl implements RoleService {
     private final RoleRepository roleRepository;
 
-
     @Override
     @Transactional
     public Role save(Role role) {
         if(roleRepository.findByRoleName((role.getRoleName())).isPresent()){
-            throw new IllegalArgumentException("Role with this name  " + role.getRoleName().toString() + " already exists");
-
+            throw new IllegalArgumentException("Role with name " + role.getRoleName() + " is already exist");
         }
         return roleRepository.save(role);
     }
 
     @Override
     public Role getByName(String roleName) {
-        return roleRepository.findByRoleName(Role.RoleName.valueOf(roleName)).orElseThrow(
-                () -> new NoSuchElementException("Can't find role by role name:" + roleName));
+        return roleRepository.findByRoleName(roleName).orElseThrow(
+                () -> new NoSuchElementException("Can't find role with name:" + roleName));
     }
 }

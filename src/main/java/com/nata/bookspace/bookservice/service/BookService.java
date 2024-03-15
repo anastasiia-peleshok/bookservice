@@ -10,8 +10,8 @@ import java.util.Optional;
 public interface BookService {
     List<BookDTO> getBooks();
     List<BookDTO> getBooksByGenre(Genre genre);
-    Optional<BookDTO> getBookById(long theId);
+    BookDTO getBookById(long theId);
     Book saveBook(BookDTO theBookDTO);
-    Book editBook(long theBookId,BookDTO theBookDTO);
+    Book editBook(long theBookId, BookDTO theBookDTO);
     void deleteBook(long theId);
 }
